@@ -29,7 +29,6 @@ class Bitrix
     {
         try {
             $users = $this->bitrixInstance->getContactList([], ['ID', 'EMAIL']);
-            $users = $users->current();
 
             return $this->convertUsers($users);
         } catch (\Exception $e) {
@@ -38,26 +37,29 @@ class Bitrix
         }
     }
 
-    protected function convertUsers(array $users): array
+    protected function convertUsers(\Generator $generatorUsers): array
     {
         $convertedUsers = [];
-        foreach ($users as $user) {
-            $emails      = $user['EMAIL'];
-            $emailsArray = [];
+        /* Generator return users in array by 50 items */
+        foreach ($generatorUsers as $users) {
+            foreach ($users as $user) {
 
-            if ( ! empty($emails) && is_array($emails)) {
-                foreach ($emails as $email) {
-                    $emailsArray[] = $email['VALUE'];
+                $emails      = $user['EMAIL'];
+                $emailsArray = [];
+
+                if ( ! empty($emails) && is_array($emails)) {
+                    foreach ($emails as $email) {
+                        $emailsArray[] = $email['VALUE'];
+                    }
                 }
+                $emailsString     = implode(',', $emailsArray);
+                $convertedUsers[] = [
+                    'id'     => $user['ID'],
+                    'emails' => $emailsString,
+                ];
+
             }
-            $emailsString     = implode(',', $emailsArray);
-            $convertedUsers[] = [
-                'id'     => $user['ID'],
-                'emails' => $emailsString,
-            ];
-
         }
-
         return $convertedUsers;
     }
 }
