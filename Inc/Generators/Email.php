@@ -48,8 +48,10 @@ class Email
     {
         $randomNumbersForPostfix = [];
         while (count($randomNumbersForPostfix) < $countOfEmailsWithPostfix) {
-            $randomNumbersForPostfix[] = $this->faker->numberBetween($this->numberAfterPostfixMin,
-                $this->numberAfterPostfixMax);
+            $randomNumbersForPostfix[] = $this->faker->numberBetween(
+                $this->numberAfterPostfixMin,
+                $this->numberAfterPostfixMax
+            );
             /* Remove duplications */
             $randomNumbersForPostfix = array_unique($randomNumbersForPostfix);
         }
